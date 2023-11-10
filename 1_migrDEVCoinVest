@@ -1,0 +1,14 @@
+const DEVCoin = artifacts.require("DEVCoin");
+const DEVCoinVest = artifacts.require("DEVCoinVest");
+
+module.exports = function (deployer, network, accounts) {
+  const treasuryAddress = accounts[0];
+
+  const vestingBeneficiary = "0xc157AD3136A52956D711B11105B62e8ac89827BB";
+  const vestingStartTimestamp = Math.floor(Date.now() / 1000); 
+  const vestingDurM = 11;
+  const vestingDurationSeconds = vestingDurM*30*24*60*60;
+
+  deployer.deploy(DEVCoin, treasuryAddress)
+    .then(() => deployer.deploy(DEVCoinVest, vestingBeneficiary, vestingStartTimestamp, vestingDurationSeconds));
+};
