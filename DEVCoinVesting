@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Capped.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "@openzeppelin/contracts/finance/VestingWallet.sol";
+
+contract DEVCoin is ERC20, Ownable, ERC20Capped, ERC20Burnable {
+    uint8 constant DECIMALS = 14;
+
+    constructor(address _treasury) ERC20("DEVCoin", "DEV") Ownable() ERC20Capped(8000000 * 10**DECIMALS) {
+        treasury = _treasury;
+        mint(treasury, 160000 * 10**DECIMALS);
+    }
+
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+
+    function decimals() public override view returns (uint8) {
+        return DECIMALS;
+    }
+
+    function _update(address _account, address _to, uint256 value) internal override(ERC20, ERC20Capped) {
+        super._update(_account, _to, value);
+    }
+
+    function swap() payable public{
+        uint256 amount = msg.value*rate;
+        ERC20(token).transfer(msg.sender,amount);
+    }
+
+
+contract DEVCoinVest is Vestingwallet{
+    address beneficiary = "0xc157AD3136A52956D711B11105B62e8ac89827BB";
+
+    uint256 MINUTE = 60;
+    uint256 HOUR = MINUTE*60;
+    uint256 DAY = HOUR*24;
+    uint256 MON11 = DAY*334;
+
+    uint64 durationSeconds = MON11;
+constructor() Vestingwallet (beneficiary, uint64(block.timestamp),durationSeconds){
+
+}
+}
